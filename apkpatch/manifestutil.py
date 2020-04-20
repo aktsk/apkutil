@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # coding: UTF-8
 
+import colorama
+from colorama import Fore, Back, Style
 import xml.etree.ElementTree as ET
 
 
-class CheckManifest(object):
+class ManifestUtil(object):
 
     def __init__(self, path):
-        tree = ET.parse(path)
-        self.root = tree.getroot()
+        self.path = path
+        self.tree = ET.parse(self.path)
+        self.root = self.tree.getroot()
 
     def get_permissions(self):
         permissions = []
@@ -38,3 +41,24 @@ class CheckManifest(object):
         
         else:
             return False
+    
+    def check_all(self):
+        colorama.init(autoreset=True)
+        print('Permission:')
+        print(self.get_permissions())
+        print('Debuggable:')
+        if self.is_debuggable():
+            print(Fore.RED + 'True')
+        else:
+            print(Fore.BLUE + 'False')
+        print('AllowBackup:')
+        if self.is_allowBackup():
+            print(Fore.RED + 'True')
+        else:
+            print(Fore.BLUE + 'False')
+
+    def to_debuggable(self):
+        application_tag = self.root.findall('application')
+        application_tag = application_tag[0]
+        application_tag.set('{http://schemas.android.com/apk/res/android}debuggable', 'true')
+        self.tree.write(self.path)
