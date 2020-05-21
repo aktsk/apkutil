@@ -6,12 +6,12 @@ import colorama
 from colorama import Fore, Back, Style
 
 from . import manifestutil
-from . import apkutil
+from . import util
 
 
 def cmd_todebuggable(args):
     print('Decoding APK by Apktool...')
-    apkutil.decode(args.apk_path)
+    util.decode(args.apk_path)
 
     print('Checking AndroidManifest.xml...')
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
@@ -26,12 +26,12 @@ def cmd_todebuggable(args):
     apk_path = args.output
     if args.output is None:
         apk_path = dir_name + ".patched.apk"
-    apkutil.build(dir_name, apk_path)
+    util.build(dir_name, apk_path)
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 def cmd_decode(args):
     print('Decoding APK by Apktool...')
-    apkutil.decode(args.apk_path)
+    util.decode(args.apk_path)
 
     print('Checking AndroidManifest.xml...')
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
@@ -42,20 +42,21 @@ def cmd_build(args):
     apk_path = args.output
     if args.output is None:
         apk_path = args.dir_name + ".patched.apk"
-    apkutil.build(args.dir_name, apk_path)
+    util.build(args.dir_name, apk_path)
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 def cmd_sign(args):
     print('Signing APK by apksigner...')
-    apkutil.sign(args.apk_path)
+    util.sign(args.apk_path)
 
 def cmd_info(args):
     print('Getting package name by aapt...')
-    apkutil.get_packagename(args.apk_path)
+    util.get_packagename(args.apk_path)
 
 def cmd_screenshot(args):
     print('Getting a screenshot from connected device...')
-    apkutil.get_screenshot()
+    file_name = util.get_screenshot()
+    print(Fore.CYAN + 'Output: ' + file_name)
 
 def main():
     parser = argparse.ArgumentParser(description='apk patcher')

@@ -25,7 +25,7 @@ def build(dir_name, apk_path):
 
 def sign(apk_path):
     home_dir = os.environ['HOME']
-    with open(home_dir + "/apkpatch.json") as f:
+    with open(home_dir + "/apkutil.json") as f:
         config = json.load(f)
         keystore_path = config['keystore_path'].replace('~', home_dir)
         ks_key_alias = config['ks-key-alias']
@@ -62,7 +62,8 @@ def get_screenshot():
     adb_path = glob.glob(home_dir + '/Library/Android/sdk/platform-tools/adb')[0]
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
-    screenshot_path = '/data/local/tmp/screenshot-' + timestamp + '.png'
+    screenshot_file = 'screenshot-' + timestamp + '.png'
+    screenshot_path = '/data/local/tmp/' + screenshot_file
 
     screencap_cmd = [adb_path]
     screencap_cmd.append('shell')
@@ -84,3 +85,4 @@ def get_screenshot():
     rm_cmd.append(screenshot_path)
     rm_proc = subprocess.Popen(rm_cmd, stdout=subprocess.PIPE)
     outs, errs = rm_proc.communicate()
+    return screenshot_file

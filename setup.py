@@ -4,14 +4,14 @@
 from setuptools import setup
 
 setup(
-    name="apkpatch",
+    name="apkutil",
     version="0.0.1",
-    description="unpacking, patch, packing script",
+    description="decode, patch, build, etc",
     author="Taichi Kotake",
-    packages=['apkpatch'],
+    packages=['apkutil'],
     entry_points={
         'console_scripts':[
-            'apkpatch = apkpatch.cli:main',
+            'apkutil = apkutil.cli:main',
         ],
     },
     install_requires=[
