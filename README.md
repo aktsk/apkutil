@@ -1,17 +1,24 @@
 # apkutil
+`apkutil` is a useful utility for android app security testing.
+It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
 
 ## Installation
+Since `apkutil` is implemented in Python, it can be installed with the pip command, which is a Python package management system.
 
 ```
 $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 ```
 
 ## Usage
+The command outputs are displayed in color. Subcommands can be used to invoke a feature.
 
 ![debuggable](./img/debuggable.png)
 
 ### debuggable
+`debuggable` subcommand makes the apk debuggable.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
+This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
+
 
 ```
 $ apkutil debuggable sample.apk
@@ -53,6 +60,7 @@ Output: sample.patched.apk
 ```
 
 ### info
+`info` subcommand allows you to see the package name.
 
 ```
 $ apkutil info sample.apk
@@ -61,6 +69,7 @@ Getting package name by aapt...
 ```
 
 ### screenshot
+`screenshot` subcommand allows you to get screenshot from connected device.
 
 ```
 $ apkutil screenshot 
@@ -71,6 +80,7 @@ Output: screenshot-2020-05-21-16-58-20.png
 ```
 
 ### decode
+`decode` subcommand make the apk decode by apktool.
 
 ```
 $ apkutil decode sample.apk
@@ -97,6 +107,7 @@ False
 ```
 
 ### sign
+`sign` subcommand make the apk sign by apksigner.
 
 ```
 $ apkutil sign sample.apk
@@ -105,6 +116,7 @@ Signed
 ```
 
 ### build
+`build` subcommand make the apk build by apktool.
 
 ```
 $ apkutil build sample
