@@ -2,6 +2,21 @@
 `apkutil` is a useful utility for android app security testing.
 It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
 
+## Requirements
+
+- Android SDK build tools
+- [Apktool](https://ibotpeaches.github.io/Apktool/)
+
+Also, place `~/apkutil.json` containing the keystore information necessary for signing apk in your home directory.
+
+```
+{
+    "keystore_path": "hoge.keystore",
+    "ks-key-alias": "fuga",
+    "ks-pass": "pass:foo"
+}
+```
+
 ## Installation
 Since `apkutil` is implemented in Python, it can be installed with the pip command, which is a Python package management system.
 
