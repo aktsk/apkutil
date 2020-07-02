@@ -6,6 +6,7 @@ import glob
 import json
 import os
 import subprocess
+from colorama import Fore
 
 
 def decode(apk_path):
@@ -20,6 +21,7 @@ def decode(apk_path):
         print('apktool not found.')
         print('Please install apktool')
 
+
 def build(dir_name, apk_path):
     apktool_cmd = ['apktool']
     apktool_cmd.extend(['b', dir_name])
@@ -32,6 +34,7 @@ def build(dir_name, apk_path):
     except FileNotFoundError as e:
         print('apktool not found.')
         print('Please install apktool.')
+
 
 def sign(apk_path):
     home_dir = os.environ['HOME']
@@ -62,7 +65,7 @@ def sign(apk_path):
         apksigner_cmd.append(apk_path)
         proc = subprocess.Popen(apksigner_cmd, stdout=subprocess.PIPE)
         outs, errs = proc.communicate()
-        print(outs.decode('ascii'))
+        print(Fore.CYAN + outs.decode('ascii'))
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
@@ -86,6 +89,7 @@ def get_packagename(apk_path):
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
         print('Please install Android SDK Build Tools.')
+
 
 def get_screenshot():
     try:

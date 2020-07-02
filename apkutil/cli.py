@@ -29,6 +29,7 @@ def cmd_todebuggable(args):
     util.build(dir_name, apk_path)
     print(Fore.CYAN + 'Output: ' + apk_path)
 
+
 def cmd_decode(args):
     print('Decoding APK by Apktool...')
     util.decode(args.apk_path)
@@ -37,6 +38,7 @@ def cmd_decode(args):
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
     manifest.check_all()
 
+
 def cmd_build(args):
     print('Building APK by Apktool...')
     apk_path = args.output
@@ -44,19 +46,26 @@ def cmd_build(args):
         apk_path = args.dir_name + ".patched.apk"
     util.build(args.dir_name, apk_path)
     print(Fore.CYAN + 'Output: ' + apk_path)
+    print(Style.RESET_ALL)
+    print('Signing APK by apksigner...')
+    util.sign(apk_path)
+
 
 def cmd_sign(args):
     print('Signing APK by apksigner...')
     util.sign(args.apk_path)
 
+
 def cmd_info(args):
     print('Getting package name by aapt...')
     util.get_packagename(args.apk_path)
+
 
 def cmd_screenshot(args):
     print('Getting a screenshot from connected device...')
     file_name = util.get_screenshot()
     print(Fore.CYAN + 'Output: ' + file_name)
+
 
 def main():
     parser = argparse.ArgumentParser(description='apk patcher')

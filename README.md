@@ -1,6 +1,7 @@
 # apkutil
-`apkutil` is a useful utility for android app security testing.
+`apkutil` is a useful utility for security testing.
 It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
+I've only checked it works on macOS.
 
 ## Requirements
 
@@ -27,7 +28,7 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 ## Usage
 The command outputs are displayed in color. Subcommands can be used to invoke a feature.
 
-![debuggable](./img/debuggable.png)
+![debuggable](./img/debuggable.gif)
 
 ### debuggable
 `debuggable` subcommand makes the apk debuggable.
@@ -132,6 +133,7 @@ Signed
 
 ### build
 `build` subcommand make the apk build by apktool.
+It also sign the apk after the build is complete.
 
 ```
 $ apkutil build sample
@@ -147,4 +149,10 @@ I: Copying unknown files/dir...
 I: Built apk...
 
 Output: sample.patched.apk
+
+Signing APK by apksigner...
+Signed
 ```
+
+## License
+MIT License

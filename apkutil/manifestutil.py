@@ -26,9 +26,9 @@ class ManifestUtil(object):
         application_tag = self.root.findall('application')
         application_tag = application_tag[0]
         if '{http://schemas.android.com/apk/res/android}debuggable' in application_tag.attrib \
-                    and application_tag.attrib['{http://schemas.android.com/apk/res/android}debuggable'] == 'true':
+                and application_tag.attrib['{http://schemas.android.com/apk/res/android}debuggable'] == 'true':
             return True
-        
+
         else:
             return False
 
@@ -36,12 +36,12 @@ class ManifestUtil(object):
         application_tag = self.root.findall('application')
         application_tag = application_tag[0]
         if '{http://schemas.android.com/apk/res/android}allowBackup' in application_tag.attrib \
-                    and application_tag.attrib['{http://schemas.android.com/apk/res/android}allowBackup'] == 'true':
+                and application_tag.attrib['{http://schemas.android.com/apk/res/android}allowBackup'] == 'true':
             return True
-        
+
         else:
             return False
-    
+
     def check_all(self):
         colorama.init(autoreset=True)
         print('Permission:')
