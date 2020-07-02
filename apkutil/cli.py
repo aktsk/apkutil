@@ -71,7 +71,7 @@ def main():
     parser = argparse.ArgumentParser(description='apk patcher')
     subparsers = parser.add_subparsers()
 
-    parser_todebuggable = subparsers.add_parser('debuggable', help='')
+    parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='')
     parser_todebuggable.add_argument('apk_path', help='')
     parser_todebuggable.add_argument('--output', '-o')
     parser_todebuggable.set_defaults(handler=cmd_todebuggable)
@@ -85,7 +85,7 @@ def main():
     parser_build.add_argument('--output', '-o')
     parser_build.set_defaults(handler=cmd_build)
 
-    parser_sign = subparsers.add_parser('sign', help='')
+    parser_sign = subparsers.add_parser('sign', aliases=['s'], help='')
     parser_sign.add_argument('apk_path', help='')
     parser_sign.set_defaults(handler=cmd_sign)
 
@@ -93,7 +93,7 @@ def main():
     parser_info.add_argument('apk_path', help='')
     parser_info.set_defaults(handler=cmd_info)
 
-    parser_screenshot = subparsers.add_parser('screenshot', help='')
+    parser_screenshot = subparsers.add_parser('screenshot', aliases=['ss'], help='')
     parser_screenshot.set_defaults(handler=cmd_screenshot)
 
     args = parser.parse_args()
