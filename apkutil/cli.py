@@ -17,7 +17,6 @@ def cmd_todebuggable(args):
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
     manifest.check_all()
 
-    colorama.init(autoreset=True)
     print(Fore.CYAN + '\nSet debuggable attribute to true in AndroidManifest!')
     manifest.to_debuggable()
 
@@ -27,6 +26,9 @@ def cmd_todebuggable(args):
     if args.output is None:
         apk_path = dir_name + ".patched.apk"
     util.build(dir_name, apk_path)
+
+    print('Signing APK by apksigner...')
+    util.sign(apk_path)
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 
@@ -45,10 +47,10 @@ def cmd_build(args):
     if args.output is None:
         apk_path = args.dir_name + ".patched.apk"
     util.build(args.dir_name, apk_path)
-    print(Fore.CYAN + 'Output: ' + apk_path)
-    print(Style.RESET_ALL)
+
     print('Signing APK by apksigner...')
     util.sign(apk_path)
+    print(Fore.CYAN + 'Output: ' + apk_path)
 
 
 def cmd_sign(args):
@@ -68,6 +70,7 @@ def cmd_screenshot(args):
 
 
 def main():
+    colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description='apk patcher')
     subparsers = parser.add_subparsers()
 
@@ -89,7 +92,7 @@ def main():
     parser_sign.add_argument('apk_path', help='')
     parser_sign.set_defaults(handler=cmd_sign)
 
-    parser_info = subparsers.add_parser('info', help='')
+    parser_info = subparsers.add_parser('info', aliases=['i'], help='')
     parser_info.add_argument('apk_path', help='')
     parser_info.set_defaults(handler=cmd_info)
 
