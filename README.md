@@ -39,12 +39,12 @@ Most of the subcommands are assigned with alias, which is useful.
 
 |subcommand  |alias  |desc  |
 |---|---|---|
-|`debuggable` |`debug`, `dg`  | make the APK debuggable  |
-|`info` | None | identify the package name |
+|`debuggable` |`debug`, `dg`  | make APK debuggable  |
+|`info` | `i` | identify the package name |
 |`screenshot` |`ss`  |get screenshot from connected device |
-|`decode` |`d`  |decode the APK |
-|`build` |`b`  |build the APK |
-|`sign` |`s`  |sign the APK |
+|`decode` |`d`  |decode APK |
+|`build` |`b`  |build APK |
+|`sign` |`s`  |sign APK |
 
 
 ### debuggable
@@ -88,6 +88,9 @@ I: Copying libs... (/lib)
 I: Building apk file...
 I: Copying unknown files/dir...
 I: Built apk...
+
+Signing APK by apksigner...
+Signed
 
 Output: sample.patched.apk
 ```
@@ -156,10 +159,10 @@ I: Building apk file...
 I: Copying unknown files/dir...
 I: Built apk...
 
-Output: sample.patched.apk
-
 Signing APK by apksigner...
 Signed
+
+Output: sample.patched.apk
 ```
 
 ### sign
