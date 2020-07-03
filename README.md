@@ -29,12 +29,26 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 ```
 
 ## Usage
-The command outputs are displayed in color. Subcommands can be used to invoke a feature.
+The command outputs are displayed in color. You can use a function with subcommands.
+The GIF is a scene of changing the APK to debuggable.
 
 ![debuggable](./img/debuggable.gif)
 
+### subcommands
+Most of the subcommands are assigned with alias, which is useful.
+
+|subcommand  |alias  |desc  |
+|---|---|---|
+|`debuggable` |`debug`, `dg`  | make the APK debuggable  |
+|`info` | None | identify the package name |
+|`screenshot` |`ss`  |get screenshot from connected device |
+|`decode` |`d`  |decode the APK |
+|`build` |`b`  |build the APK |
+|`sign` |`s`  |sign the APK |
+
+
 ### debuggable
-`debuggable` subcommand makes the apk debuggable.
+`debuggable` subcommand makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
 This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
 
@@ -99,7 +113,7 @@ Output: screenshot-2020-05-21-16-58-20.png
 ```
 
 ### decode
-`decode` subcommand make the apk decode by apktool.
+`decode` subcommand make the APK decode by apktool.
 
 ```
 $ apkutil decode sample.apk
@@ -125,18 +139,9 @@ AllowBackup:
 False
 ```
 
-### sign
-`sign` subcommand make the apk sign by apksigner.
-
-```
-$ apkutil sign sample.apk
-Signing APK by apksigner...
-Signed
-```
-
 ### build
-`build` subcommand make the apk build by apktool.
-It also sign the apk after the build is complete.
+`build` subcommand make the APK build by apktool.
+It also sign the APK after the build is complete.
 
 ```
 $ apkutil build sample
@@ -153,6 +158,15 @@ I: Built apk...
 
 Output: sample.patched.apk
 
+Signing APK by apksigner...
+Signed
+```
+
+### sign
+`sign` subcommand make the apk sign by apksigner.
+
+```
+$ apkutil sign sample.apk
 Signing APK by apksigner...
 Signed
 ```
