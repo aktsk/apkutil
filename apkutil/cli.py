@@ -11,7 +11,10 @@ from . import util
 
 def cmd_todebuggable(args):
     print('Decoding APK by Apktool...')
-    util.decode(args.apk_path)
+    try:
+        util.decode(args.apk_path)
+    except:
+        return
 
     print('Checking AndroidManifest.xml...')
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
@@ -25,16 +28,26 @@ def cmd_todebuggable(args):
     apk_path = args.output
     if args.output is None:
         apk_path = dir_name + ".patched.apk"
-    util.build(dir_name, apk_path)
+
+    try:
+        util.build(dir_name, apk_path)
+    except:
+        return
 
     print('Signing APK by apksigner...')
-    util.sign(apk_path)
+    try:
+        util.sign(apk_path)
+    except:
+        return
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 
 def cmd_decode(args):
     print('Decoding APK by Apktool...')
-    util.decode(args.apk_path)
+    try:
+        util.decode(args.apk_path)
+    except:
+        return
 
     print('Checking AndroidManifest.xml...')
     manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
@@ -46,27 +59,45 @@ def cmd_build(args):
     apk_path = args.output
     if args.output is None:
         apk_path = args.dir_name + ".patched.apk"
-    util.build(args.dir_name, apk_path)
+    try:
+        util.build(args.dir_name, apk_path)
+    except Exception as e:
+        return
 
     print('Signing APK by apksigner...')
-    util.sign(apk_path)
+    try:
+        util.sign(apk_path)
+    except:
+        return
+
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 
 def cmd_sign(args):
     print('Signing APK by apksigner...')
-    util.sign(args.apk_path)
+    try:
+        util.sign(args.apk_path)
+    except:
+        return
+    
+    print(Fore.CYAN + 'Output: ' + apk_path)
 
 
 def cmd_info(args):
     print('Getting package name by aapt...')
-    util.get_packagename(args.apk_path)
+    try:
+        util.get_packagename(args.apk_path)
+    except:
+        return
 
 
 def cmd_screenshot(args):
     print('Getting a screenshot from connected device...')
-    file_name = util.get_screenshot()
-    print(Fore.CYAN + 'Output: ' + file_name)
+    try:
+        file_name = util.get_screenshot()
+        print(Fore.CYAN + 'Output: ' + file_name)
+    except:
+        return
 
 
 def main():
