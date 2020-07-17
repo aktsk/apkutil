@@ -22,6 +22,10 @@ class ManifestUtil(object):
 
         return permissions
 
+    def get_package_name(self):
+        return self.root.attrib.get("package")
+
+
     def is_debuggable(self):
         application_tag = self.root.findall('application')
         application_tag = application_tag[0]
@@ -44,13 +48,20 @@ class ManifestUtil(object):
 
     def check_all(self):
         colorama.init(autoreset=True)
+        print('Package name:')
+        print(Fore.CYAN + self.get_package_name() + '\n')
+
         print('Permission:')
-        print(self.get_permissions())
+        for p in self.get_permissions():
+            print(p)
+        print('')
+
         print('Debuggable:')
         if self.is_debuggable():
-            print(Fore.RED + 'True')
+            print(Fore.RED + 'True' + '\n')
         else:
-            print(Fore.BLUE + 'False')
+            print(Fore.BLUE + 'False' + '\n')
+
         print('AllowBackup:')
         if self.is_allowBackup():
             print(Fore.RED + 'True')
