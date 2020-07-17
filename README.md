@@ -70,9 +70,11 @@ I: Copying original files...
 
 Checking AndroidManifest.xml...
 Permission:
-['android.permission.INTERNET']
+android.permission.INTERNET
+
 Debuggable:
 False
+
 AllowBackup:
 False
 
@@ -135,9 +137,11 @@ I: Copying original files...
 
 Checking AndroidManifest.xml...
 Permission:
-['android.permission.INTERNET']
+android.permission.INTERNET
+
 Debuggable:
 False
+
 AllowBackup:
 False
 ```
