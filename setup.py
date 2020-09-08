@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="apkutil",
-    version="0.1.2",
+    version="0.1.3",
     description="decode, patch, build, etc",
     author="Taichi Kotake",
     packages=['apkutil'],

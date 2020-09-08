@@ -80,7 +80,7 @@ def cmd_sign(args):
     except:
         return
     
-    print(Fore.CYAN + 'Output: ' + apk_path)
+    print(Fore.CYAN + 'Output: ' + args.apk_path)
 
 
 def cmd_info(args):
