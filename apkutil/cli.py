@@ -13,7 +13,9 @@ def cmd_todebuggable(args):
     print('Decoding APK by Apktool...')
     try:
         util.decode(args.apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
 
     print('Checking AndroidManifest.xml...')
@@ -31,14 +33,19 @@ def cmd_todebuggable(args):
 
     try:
         util.build(dir_name, apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
 
     print('Signing APK by apksigner...')
     try:
         util.sign(apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
+
     print(Fore.CYAN + 'Output: ' + apk_path)
 
 
@@ -46,7 +53,9 @@ def cmd_decode(args):
     print('Decoding APK by Apktool...')
     try:
         util.decode(args.apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
 
     print('Checking AndroidManifest.xml...')
@@ -62,12 +71,16 @@ def cmd_build(args):
     try:
         util.build(args.dir_name, apk_path)
     except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
 
     print('Signing APK by apksigner...')
     try:
         util.sign(apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
 
     print(Fore.CYAN + 'Output: ' + apk_path)
@@ -77,9 +90,11 @@ def cmd_sign(args):
     print('Signing APK by apksigner...')
     try:
         util.sign(args.apk_path)
-    except:
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
         return
-    
+
     print(Fore.CYAN + 'Output: ' + args.apk_path)
 
 
@@ -87,8 +102,9 @@ def cmd_info(args):
     print('Getting package name by aapt...')
     try:
         util.get_packagename(args.apk_path)
-    except:
-        return
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
 
 
 def cmd_screenshot(args):
@@ -96,8 +112,9 @@ def cmd_screenshot(args):
     try:
         file_name = util.get_screenshot()
         print(Fore.CYAN + 'Output: ' + file_name)
-    except:
-        return
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
 
 
 def main():
