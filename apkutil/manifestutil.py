@@ -3,7 +3,7 @@
 
 import colorama
 from colorama import Fore, Back, Style
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 
 
 class ManifestUtil(object):
@@ -25,6 +25,18 @@ class ManifestUtil(object):
     def get_package_name(self):
         return self.root.attrib.get("package")
 
+    def get_custom_schemas(self):
+        custom_schemas = []
+        application_tag = self.root.findall('application')
+        application_tag = application_tag[0]
+
+        for activity_tag in application_tag.findall('activity'):
+            for intent_filter_tag in activity_tag.findall('intent-filter'):
+                for data_tag in intent_filter_tag.findall('data'):
+                    if '{http://schemas.android.com/apk/res/android}scheme' in data_tag.attrib:
+                        custom_schemas.append(data_tag.attrib['{http://schemas.android.com/apk/res/android}scheme'])
+        
+        return custom_schemas
 
     def is_debuggable(self):
         application_tag = self.root.findall('application')
@@ -53,7 +65,7 @@ class ManifestUtil(object):
 
         print('Permission:')
         for p in self.get_permissions():
-            print(p)
+            print(Fore.CYAN + p)
         print('')
 
         print('Debuggable:')
@@ -64,9 +76,17 @@ class ManifestUtil(object):
 
         print('AllowBackup:')
         if self.is_allowBackup():
-            print(Fore.RED + 'True')
+            print(Fore.RED + 'True' + '\n')
         else:
-            print(Fore.BLUE + 'False')
+            print(Fore.BLUE + 'False' + '\n')
+
+        print('Custom schemas:')
+        schemas = self.get_custom_schemas()
+        if len(schemas) > 0:
+            for schema in schemas:
+                print(Fore.CYAN + schema)
+        else:
+            print(Fore.CYAN + 'None')
 
     def to_debuggable(self):
         application_tag = self.root.findall('application')

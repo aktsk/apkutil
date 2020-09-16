@@ -23,8 +23,7 @@ def decode(apk_path):
             errs = errs.decode('ascii')
             # unsupported `apktool d -f`
             errs = errs.replace('Use -f switch if you want to overwrite it.', '')
-            print(errs)
-            raise Exception
+            raise Exception(errs)
 
     except FileNotFoundError as e:
         print('apktool not found.')
@@ -42,8 +41,8 @@ def build(dir_name, apk_path):
             print(outs.decode('ascii'))
         
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
-            raise Exception
+            errs = errs.decode('ascii')
+            raise Exception(errs)
 
     except FileNotFoundError as e:
         print('apktool not found.')
@@ -69,8 +68,8 @@ def sign(apk_path):
 
     try:
         if not os.path.isfile(apk_path):
-            print('{0} is not found.'.format(apk_path))
-            raise Exception
+            errs = '{0} is not found.'.format(apk_path)
+            raise Exception(errs)
 
         apksigner_path = glob.glob(home_dir + '/Library/Android/sdk/build-tools/*/apksigner')[0]
         apksigner_cmd = [apksigner_path]
@@ -87,8 +86,8 @@ def sign(apk_path):
             print(Fore.CYAN + outs.decode('ascii'))
         
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
-            raise Exception
+            errs = errs.decode('ascii')
+            raise Exception(errs)
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
@@ -111,8 +110,8 @@ def get_packagename(apk_path):
             print(outs.decode('ascii'))
 
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
-            raise Exception
+            errs = errs.decode('ascii')
+            raise Exception(errs)
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
@@ -136,8 +135,8 @@ def get_screenshot():
         _, errs = screencap_proc.communicate()
 
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
-            raise Exception
+            errs = errs.decode('ascii')
+            raise Exception(errs)
 
         pull_cmd = [adb_path]
         pull_cmd.append('pull')
@@ -146,8 +145,8 @@ def get_screenshot():
         outs, errs = pull_proc.communicate()
 
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
-            raise Exception
+            errs = errs.decode('ascii')
+            raise Exception(errs)
 
         if (outs is not None) and (len(outs) != 0):
             print(outs.decode('ascii'))

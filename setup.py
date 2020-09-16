@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="apkutil",
-    version="0.1.3",
+    version="0.1.4",
     description="decode, patch, build, etc",
     author="Taichi Kotake",
     packages=['apkutil'],
@@ -16,6 +16,7 @@ setup(
     },
     install_requires=[
         'colorama',
+        'defusedxml'
     ],
     license='MIT',
     classifiers=[
