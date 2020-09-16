@@ -78,6 +78,9 @@ False
 AllowBackup:
 False
 
+Custom schemas:
+None
+
 Set debuggable attribute to true in AndroidManifest!
 
 Building APK by Apktool...
@@ -144,6 +147,9 @@ False
 
 AllowBackup:
 False
+
+Custom schemas:
+None
 ```
 
 ### build
