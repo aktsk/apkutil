@@ -18,8 +18,12 @@ def cmd_todebuggable(args):
         print(Fore.RED + 'Failed')
         return
 
+    dir_path = args.apk_path.replace('.apk', '')
+    print('Potentially Sensitive Files:')
+    util.check_sensitive_files(dir_path)
+
     print('Checking AndroidManifest.xml...')
-    manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
+    manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
     manifest.check_all()
 
     print(Fore.CYAN + '\nSet debuggable attribute to true in AndroidManifest!')
@@ -58,10 +62,13 @@ def cmd_decode(args):
         print(Fore.RED + 'Failed')
         return
 
-    print('Checking AndroidManifest.xml...')
-    manifest = manifestutil.ManifestUtil(args.apk_path.replace('.apk', '') + '/AndroidManifest.xml')
-    manifest.check_all()
+    dir_path = args.apk_path.replace('.apk', '')
+    print('Potentially Sensitive Files:')
+    util.check_sensitive_files(dir_path)
 
+    print('Checking AndroidManifest.xml...')
+    manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
+    manifest.check_all()
 
 def cmd_build(args):
     print('Building APK by Apktool...')
@@ -119,7 +126,7 @@ def cmd_screenshot(args):
 
 def main():
     colorama.init(autoreset=True)
-    parser = argparse.ArgumentParser(description='apk patcher')
+    parser = argparse.ArgumentParser(description='useful utility for android security testing')
     subparsers = parser.add_subparsers()
 
     parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='')

@@ -165,3 +165,20 @@ def get_screenshot():
     except (IndexError, FileNotFoundError) as e:
         print('adb not found.')
         print('Please install Android SDK Build Tools.')
+
+
+def check_sensitive_files(target_path):
+    types = ('**/*.md', '**/*.cpp', '**/*.c', '**/*.h', '**/*.java', '**/*.kts' 
+        '**/*.bat', '**/*.sh', '**/*.template', '**/*.gradle', '**/*.json', '**/*.yml', '**/*.txt')
+    found_files = []
+    for file_type in types:
+        found_files.extend(glob.glob(os.path.join(target_path, file_type), recursive=True))
+    
+    found_files = [f for f in found_files if 'apktool.yml' not in f]
+    if len(found_files) == 0:
+        print(Fore.BLUE + 'None')
+    else:
+        for sensitive_file in found_files:
+            print(Fore.RED + sensitive_file)
+    print('')
+    return found_files

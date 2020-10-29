@@ -5,6 +5,7 @@
 `apkutil` is a useful utility for mobile security testing.
 It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
 I've only checked it works on macOS.
+iOS version is [here](https://github.com/aktsk/ipautil).
 
 ## Requirements
 
@@ -41,10 +42,10 @@ Most of the subcommands are assigned with alias, which is useful.
 |---|---|---|
 |`debuggable` |`debug`, `dg`  | make APK debuggable  |
 |`info` | `i` | identify the package name |
-|`screenshot` |`ss`  |get screenshot from connected device |
-|`decode` |`d`  |decode APK |
-|`build` |`b`  |build APK |
-|`sign` |`s`  |sign APK |
+|`screenshot` |`ss`  | get screenshot from connected device |
+|`decode` |`d`  | decode APK |
+|`build` |`b`  | build APK |
+|`sign` |`s`  | sign APK |
 
 
 ### debuggable
@@ -52,6 +53,7 @@ Most of the subcommands are assigned with alias, which is useful.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
 This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
 
+When decoding the APK, check for potentially sensitive files and check the AndroidManifest.xml.
 
 ```
 $ apkutil debuggable sample.apk
@@ -67,6 +69,10 @@ I: Baksmaling classes.dex...
 I: Copying assets and libs...
 I: Copying unknown files...
 I: Copying original files...
+
+Potentially Sensitive Files:
+sample/README.md
+sample/hoge.sh
 
 Checking AndroidManifest.xml...
 Permission:
@@ -122,6 +128,7 @@ Output: screenshot-2020-05-21-16-58-20.png
 
 ### decode
 `decode` subcommand make the APK decode by apktool.
+When decoding the APK, check for potentially sensitive files and check the AndroidManifest.xml.
 
 ```
 $ apkutil decode sample.apk
@@ -137,6 +144,10 @@ I: Baksmaling classes.dex...
 I: Copying assets and libs...
 I: Copying unknown files...
 I: Copying original files...
+
+Potentially Sensitive Files:
+sample/README.md
+sample/hoge.sh
 
 Checking AndroidManifest.xml...
 Permission:
