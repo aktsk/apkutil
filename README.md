@@ -3,6 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/aktsk/apkutil/blob/master/LICENSE)
 
 `apkutil` is a useful utility for mobile security testing.
+This tool makes it easy to resign the APK, check for potentially sensitive files and `AndroidManifest.xml` in the APK.
+
 It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
 I've only checked it works on macOS.
 iOS version is [here](https://github.com/aktsk/ipautil).
