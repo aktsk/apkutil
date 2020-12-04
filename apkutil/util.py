@@ -30,17 +30,29 @@ def decode(apk_path):
         print('Please install apktool')
 
 
-def build(dir_name, apk_path):
+def build(dir_name, apk_path, aapt2=False):
     apktool_cmd = ['apktool']
     apktool_cmd.extend(['b', dir_name])
     apktool_cmd.extend(['-o', apk_path])
+
+    if aapt2:
+        apktool_cmd.extend(['--use-aapt2'])
+    
     try:
         proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         outs, errs = proc.communicate()
+
+        is_built = False
+
         if (outs is not None) and (len(outs) != 0):
-            print(outs.decode('ascii'))
+            outs = outs.decode('ascii')
+
+            if "I: Built apk..." in outs:
+                is_built = True
+
+            print(outs)
         
-        if (errs is not None) and (len(errs) != 0):
+        if (errs is not None) and (len(errs) != 0) and not is_built:
             errs = errs.decode('ascii')
             raise Exception(errs)
 
