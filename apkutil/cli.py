@@ -36,7 +36,7 @@ def cmd_todebuggable(args):
         apk_path = dir_name + ".patched.apk"
 
     try:
-        util.build(dir_name, apk_path)
+        util.build(dir_name, apk_path, aapt2=args.aapt2)
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -76,7 +76,7 @@ def cmd_build(args):
     if args.output is None:
         apk_path = args.dir_name + ".patched.apk"
     try:
-        util.build(args.dir_name, apk_path)
+        util.build(args.dir_name, apk_path, aapt2=args.aapt2)
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -127,6 +127,8 @@ def cmd_screenshot(args):
 def main():
     colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description='useful utility for android security testing')
+    parser.add_argument('--use-aapt2', '-2', action='store_true',
+        dest='aapt2', help='Use the aapt2 binary instead of aapt as part of the apktool processing.')
     subparsers = parser.add_subparsers()
 
     parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='')
