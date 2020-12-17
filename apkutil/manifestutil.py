@@ -88,8 +88,14 @@ class ManifestUtil(object):
         else:
             print(Fore.CYAN + 'None')
 
-    def to_debuggable(self):
+    def set_debuggable(self):
         application_tag = self.root.findall('application')
         application_tag = application_tag[0]
         application_tag.set('{http://schemas.android.com/apk/res/android}debuggable', 'true')
+        self.tree.write(self.path)
+    
+    def set_networkSecurityConfig(self):
+        application_tag = self.root.findall('application')
+        application_tag = application_tag[0]
+        application_tag.set('{http://schemas.android.com/apk/res/android}networkSecurityConfig', '@xml/network_security_config')
         self.tree.write(self.path)

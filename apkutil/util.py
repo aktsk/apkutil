@@ -194,3 +194,19 @@ def check_sensitive_files(target_path):
             print(Fore.RED + sensitive_file)
     print('')
     return found_files
+
+def make_network_security_config(target_path):
+    xml_path = os.path.join(target_path, 'res/xml')
+    if not os.path.exists(xml_path):
+        os.makedirs(xml_path)
+
+    with open(os.path.join(target_path, 'res/xml/network_security_config.xml'),'w') as f:
+        f.write('<?xml version="1.0" encoding="utf-8"?>\n' +
+            '<network-security-config>\n' +
+            '    <base-config>\n' +
+            '        <trust-anchors>\n' +
+            '            <certificates src="system" />\n' +
+            '            <certificates src="user" />\n' +
+            '        </trust-anchors>\n' +
+            '    </base-config>\n' +
+            '</network-security-config>')
