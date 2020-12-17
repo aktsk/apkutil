@@ -33,7 +33,7 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 
 ## Usage
 The command outputs are displayed in color. You can use a function with subcommands.
-The GIF is a scene of changing the APK to debuggable.
+The GIF shows the scene where the APK is changed to debuggable and `res/xml/network_security_config.xml` is created.
 
 ![usage](./img/usage.gif)
 
@@ -53,13 +53,13 @@ Most of the subcommands are assigned with alias, which is useful.
 
 
 ### all
-`network` subcommand sets networkSecurityConfig, makes the APK debuggable.
+`all` subcommand sets networkSecurityConfig, makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true`, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
 This feature is useful to make APK accept user certs, and use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
 
 ```
-$ apkutil debuggable sample.apk
+$ apkutil all sample.apk
 Decoding APK by Apktool...
 I: Using Apktool 2.4.1 on sample.apk
 I: Loading resource table...
