@@ -9,7 +9,7 @@ from . import manifestutil
 from . import util
 
 
-def cmd_todebuggable(args):
+def cmd_set_debuggable(args):
     print('Decoding APK by Apktool...')
     try:
         util.decode(args.apk_path)
@@ -27,7 +27,100 @@ def cmd_todebuggable(args):
     manifest.check_all()
 
     print(Fore.CYAN + '\nSet debuggable attribute to true in AndroidManifest!')
-    manifest.to_debuggable()
+    manifest.set_debuggable()
+
+    print('\nBuilding APK by Apktool...')
+    dir_name = args.apk_path.replace('.apk', '')
+    apk_path = args.output
+    if args.output is None:
+        apk_path = dir_name + ".patched.apk"
+
+    try:
+        util.build(dir_name, apk_path, aapt2=args.aapt2)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    print('Signing APK by apksigner...')
+    try:
+        util.sign(apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    print(Fore.CYAN + 'Output: ' + apk_path)
+
+
+def cmd_set_network(args):
+    print('Decoding APK by Apktool...')
+    try:
+        util.decode(args.apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    dir_path = args.apk_path.replace('.apk', '')
+    print('Potentially Sensitive Files:')
+    util.check_sensitive_files(dir_path)
+
+    print('Checking AndroidManifest.xml...')
+    manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
+    manifest.check_all()
+
+    print(Fore.CYAN + '\nSet networkSecurityConfig attribute to true in AndroidManifest!')
+    manifest.set_networkSecurityConfig()
+    util.make_network_security_config(dir_path)
+
+    print('\nBuilding APK by Apktool...')
+    dir_name = args.apk_path.replace('.apk', '')
+    apk_path = args.output
+    if args.output is None:
+        apk_path = dir_name + ".patched.apk"
+
+    try:
+        util.build(dir_name, apk_path, aapt2=args.aapt2)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    print('Signing APK by apksigner...')
+    try:
+        util.sign(apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    print(Fore.CYAN + 'Output: ' + apk_path)
+
+
+def cmd_all(args):
+    print('Decoding APK by Apktool...')
+    try:
+        util.decode(args.apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
+    dir_path = args.apk_path.replace('.apk', '')
+    print('Potentially Sensitive Files:')
+    util.check_sensitive_files(dir_path)
+
+    print('Checking AndroidManifest.xml...')
+    manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
+    manifest.check_all()
+
+    print(Fore.CYAN + '\nSet debuggable attribute to true in AndroidManifest!')
+    manifest.set_debuggable()
+
+    print(Fore.CYAN + '\nSet networkSecurityConfig attribute to true in AndroidManifest!')
+    manifest.set_networkSecurityConfig()
+    util.make_network_security_config(dir_path)
 
     print('\nBuilding APK by Apktool...')
     dir_name = args.apk_path.replace('.apk', '')
@@ -127,33 +220,43 @@ def cmd_screenshot(args):
 def main():
     colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description='useful utility for android security testing')
-    parser.add_argument('--use-aapt2', '-2', action='store_true',
+    parser.add_argument('-2', '--aapt2', '--use-aapt2', action='store_true',
         dest='aapt2', help='Use the aapt2 binary instead of aapt as part of the apktool processing.')
-    subparsers = parser.add_subparsers()
 
-    parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='')
+    subparsers = parser.add_subparsers()
+    parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='set debuggable, build & sign APK')
     parser_todebuggable.add_argument('apk_path', help='')
     parser_todebuggable.add_argument('--output', '-o')
-    parser_todebuggable.set_defaults(handler=cmd_todebuggable)
+    parser_todebuggable.set_defaults(handler=cmd_set_debuggable)
 
-    parser_decompile = subparsers.add_parser('decode', aliases=['d'], help='')
+    parser_todebuggable = subparsers.add_parser('network', aliases=['net', 'n'], help='set networkSecurityConfig, build & sign APK')
+    parser_todebuggable.add_argument('apk_path', help='')
+    parser_todebuggable.add_argument('--output', '-o')
+    parser_todebuggable.set_defaults(handler=cmd_set_network)
+
+    parser_all = subparsers.add_parser('all', aliases=['a'], help='set debuggable & networkSecurityConfig, build & sign APK')
+    parser_all.add_argument('apk_path', help='')
+    parser_all.add_argument('--output', '-o')
+    parser_all.set_defaults(handler=cmd_all)
+
+    parser_decompile = subparsers.add_parser('decode', aliases=['d'], help='decode APK')
     parser_decompile.add_argument('apk_path', help='')
     parser_decompile.set_defaults(handler=cmd_decode)
 
-    parser_build = subparsers.add_parser('build', aliases=['b'], help='')
+    parser_build = subparsers.add_parser('build', aliases=['b'], help='build APK')
     parser_build.add_argument('dir_name', help='')
     parser_build.add_argument('--output', '-o')
     parser_build.set_defaults(handler=cmd_build)
 
-    parser_sign = subparsers.add_parser('sign', aliases=['s'], help='')
+    parser_sign = subparsers.add_parser('sign', aliases=['s'], help='sign APK')
     parser_sign.add_argument('apk_path', help='')
     parser_sign.set_defaults(handler=cmd_sign)
 
-    parser_info = subparsers.add_parser('info', aliases=['i'], help='')
+    parser_info = subparsers.add_parser('info', aliases=['i'], help='identify the package name')
     parser_info.add_argument('apk_path', help='')
     parser_info.set_defaults(handler=cmd_info)
 
-    parser_screenshot = subparsers.add_parser('screenshot', aliases=['ss'], help='')
+    parser_screenshot = subparsers.add_parser('screenshot', aliases=['ss'], help='get screenshot from connected device')
     parser_screenshot.set_defaults(handler=cmd_screenshot)
 
     args = parser.parse_args()

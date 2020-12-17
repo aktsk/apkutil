@@ -35,14 +35,16 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 The command outputs are displayed in color. You can use a function with subcommands.
 The GIF is a scene of changing the APK to debuggable.
 
-![debuggable](./img/debuggable.gif)
+![usage](./img/usage.gif)
 
 ### subcommands
 Most of the subcommands are assigned with alias, which is useful.
 
 |subcommand  |alias  |desc  |
 |---|---|---|
-|`debuggable` |`debug`, `dg`  | make APK debuggable  |
+|`all` |`a` | set debuggable & networkSecurityConfig, build & sign APK |
+|`debuggable` |`debug`, `dg`  | set debuggable, build & sign APK |
+|`network` |`net`, `n`  | set networkSecurityConfig, build & sign APK |
 |`info` | `i` | identify the package name |
 |`screenshot` |`ss`  | get screenshot from connected device |
 |`decode` |`d`  | decode APK |
@@ -50,12 +52,11 @@ Most of the subcommands are assigned with alias, which is useful.
 |`sign` |`s`  | sign APK |
 
 
-### debuggable
-`debuggable` subcommand makes the APK debuggable.
-Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
-This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
+### all
+`network` subcommand sets networkSecurityConfig, makes the APK debuggable.
+Decode the APK, set debuggable attribute to `true`, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
-When decoding the APK, check for potentially sensitive files and check the AndroidManifest.xml.
+This feature is useful to make APK accept user certs, and use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
 
 ```
 $ apkutil debuggable sample.apk
@@ -91,6 +92,8 @@ None
 
 Set debuggable attribute to true in AndroidManifest!
 
+Set networkSecurityConfig attribute to true in AndroidManifest!
+
 Building APK by Apktool...
 I: Using Apktool 2.4.1
 I: Checking whether sources has changed...
@@ -104,6 +107,32 @@ I: Built apk...
 
 Signing APK by apksigner...
 Signed
+
+Output: sample.patched.apk
+```
+
+### network
+`network` subcommand sets networkSecurityConfig.
+Decode the APK, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
+
+This feature is useful to make APK accept user certs.
+
+```
+$ apkutil network sample.apk
+...
+
+Output: sample.patched.apk
+```
+
+### debuggable
+`debuggable` subcommand makes the APK debuggable.
+Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
+
+This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
+
+```
+$ apkutil debuggable sample.apk
+...
 
 Output: sample.patched.apk
 ```
@@ -135,17 +164,7 @@ When decoding the APK, check for potentially sensitive files and check the Andro
 ```
 $ apkutil decode sample.apk
 Decoding APK by Apktool...
-I: Using Apktool 2.4.1 on sample.apk
-I: Loading resource table...
-I: Decoding AndroidManifest.xml with resources...
-I: Loading resource table from file: /Users/taichi.kotake/Library/apktool/framework/1.apk
-I: Regular manifest package...
-I: Decoding file-resources...
-I: Decoding values */* XMLs...
-I: Baksmaling classes.dex...
-I: Copying assets and libs...
-I: Copying unknown files...
-I: Copying original files...
+...
 
 Potentially Sensitive Files:
 sample/README.md
@@ -172,15 +191,7 @@ It also sign the APK after the build is complete.
 ```
 $ apkutil build sample
 Building APK by Apktool...
-I: Using Apktool 2.4.1
-I: Checking whether sources has changed...
-I: Smaling smali folder into classes.dex...
-I: Checking whether resources has changed...
-I: Building resources...
-I: Copying libs... (/lib)
-I: Building apk file...
-I: Copying unknown files/dir...
-I: Built apk...
+...
 
 Signing APK by apksigner...
 Signed
