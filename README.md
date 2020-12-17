@@ -35,7 +35,7 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 The command outputs are displayed in color. You can use a function with subcommands.
 The GIF is a scene of changing the APK to debuggable.
 
-![debuggable](./img/debuggable.gif)
+![usage](./img/usage.gif)
 
 ### subcommands
 Most of the subcommands are assigned with alias, which is useful.
