@@ -37,7 +37,7 @@ The GIF shows the scene where the APK is changed to debuggable and `res/xml/netw
 
 ![usage](./img/usage.gif)
 
-### subcommands
+### Subcommands
 Most of the subcommands are assigned with alias, which is useful.
 
 |subcommand  |alias  |desc  |
@@ -52,7 +52,7 @@ Most of the subcommands are assigned with alias, which is useful.
 |`sign` |`s`  | sign APK |
 
 
-### all
+### Apply all necessary patches for pentest
 `all` subcommand sets networkSecurityConfig, makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true`, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
@@ -111,7 +111,7 @@ Signed
 Output: sample.patched.apk
 ```
 
-### network
+### Set up networkSecurityConfig
 `network` subcommand sets networkSecurityConfig.
 Decode the APK, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
@@ -124,7 +124,7 @@ $ apkutil network sample.apk
 Output: sample.patched.apk
 ```
 
-### debuggable
+### Set debuggable attribute
 `debuggable` subcommand makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
 
@@ -137,7 +137,7 @@ $ apkutil debuggable sample.apk
 Output: sample.patched.apk
 ```
 
-### info
+### Get the package name
 `info` subcommand allows you to see the package name.
 
 ```
@@ -146,8 +146,8 @@ Getting package name by aapt...
     A: package="jp.aktsk.sample" (Raw: "jp.aktsk.sample")
 ```
 
-### screenshot
-`screenshot` subcommand allows you to get screenshot from connected device.
+### Get the screenshot
+`screenshot` subcommand allows you to get the screenshot from connected device.
 
 ```
 $ apkutil screenshot 
@@ -157,7 +157,7 @@ Getting a screenshot from connected device...
 Output: screenshot-2020-05-21-16-58-20.png
 ```
 
-### decode
+### Decode the APK
 `decode` subcommand make the APK decode by apktool.
 When decoding the APK, check for potentially sensitive files and check the AndroidManifest.xml.
 
@@ -184,7 +184,7 @@ Custom schemas:
 None
 ```
 
-### build
+### Build the APK
 `build` subcommand make the APK build by apktool.
 It also sign the APK after the build is complete.
 
@@ -199,7 +199,7 @@ Signed
 Output: sample.patched.apk
 ```
 
-### sign
+### Sign the APK
 `sign` subcommand make the apk sign by apksigner.
 
 ```
