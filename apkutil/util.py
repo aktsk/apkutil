@@ -180,20 +180,31 @@ def get_screenshot():
 
 
 def check_sensitive_files(target_path):
-    types = ('**/*.md', '**/*.cpp', '**/*.c', '**/*.h', '**/*.java', '**/*.kts' 
+    types = ('**/*.md', '**/*.cpp', '**/*.c', '**/*.h', '**/*.java', '**/*.kts',
         '**/*.bat', '**/*.sh', '**/*.template', '**/*.gradle', '**/*.json', '**/*.yml', '**/*.txt')
+    allow_list = ('apktool.yml', '/assets/google-services-desktop.json',
+        '/assets/bin/Data/RuntimeInitializeOnLoads.json', '/assets/bin/Data/ScriptingAssemblies.json')
     found_files = []
     for file_type in types:
         found_files.extend(glob.glob(os.path.join(target_path, file_type), recursive=True))
     
-    found_files = [f for f in found_files if 'apktool.yml' not in f]
-    if len(found_files) == 0:
+    sensitive_files = []
+    for found_file in found_files:
+        allow_flag = False
+        for allow_file in allow_list:
+            if found_file.endswith(allow_file):
+                allow_flag = True
+                break
+        if not allow_flag:
+            sensitive_files.append(found_file)
+
+    if len(sensitive_files) == 0:
         print(Fore.BLUE + 'None')
     else:
-        for sensitive_file in found_files:
+        for sensitive_file in sensitive_files:
             print(Fore.RED + sensitive_file)
     print('')
-    return found_files
+    return sensitive_files
 
 def make_network_security_config(target_path):
     xml_path = os.path.join(target_path, 'res/xml')
