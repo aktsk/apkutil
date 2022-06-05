@@ -5,8 +5,8 @@
 `apkutil` is a useful utility for mobile security testing.
 This tool makes it easy to resign the APK, check for potentially sensitive files and `AndroidManifest.xml` in the APK.
 
-It is a wrapper for `apktool` and `apksigner`, `aapt` commands.
-I've only checked it works on macOS.
+It is a wrapper for `apktool`, `apksigner`, `aapt`, and `zipalign` commands.
+
 iOS version is [here](https://github.com/aktsk/ipautil).
 
 ## Requirements
@@ -25,6 +25,7 @@ Also, place `~/apkutil.json` containing the keystore information necessary for s
 ```
 
 ## Installation
+
 Since `apkutil` is implemented in Python, it can be installed with the pip command, which is a Python package management system.
 
 ```
@@ -32,27 +33,30 @@ $ pip install git+ssh://git@github.com/aktsk/apkutil.git
 ```
 
 ## Usage
+
 The command outputs are displayed in color. You can use a function with subcommands.
 The GIF shows the scene where the APK is changed to debuggable and `res/xml/network_security_config.xml` is created.
 
 ![usage](./img/usage.gif)
 
 ### Subcommands
+
 Most of the subcommands are assigned with alias, which is useful.
 
-|subcommand  |alias  |desc  |
-|---|---|---|
-|`all` |`a` | set debuggable & networkSecurityConfig, build & sign APK |
-|`debuggable` |`debug`, `dg`  | set debuggable, build & sign APK |
-|`network` |`net`, `n`  | set networkSecurityConfig, build & sign APK |
-|`info` | `i` | identify the package name |
-|`screenshot` |`ss`  | get screenshot from connected device |
-|`decode` |`d`  | decode APK |
-|`build` |`b`  | build APK |
-|`sign` |`s`  | sign APK |
-
+| subcommand   | alias         | desc                                                     |
+| ------------ | ------------- | -------------------------------------------------------- |
+| `all`        | -             | set debuggable & networkSecurityConfig, build & sign APK |
+| `debuggable` | `debug`, `dg` | set debuggable, build & sign APK                         |
+| `network`    | `net`, `n`    | set networkSecurityConfig, build & sign APK              |
+| `info`       | `i`           | identify the package name                                |
+| `screenshot` | `ss`          | get screenshot from connected device                     |
+| `decode`     | `d`           | decode APK                                               |
+| `build`      | `b`           | build APK                                                |
+| `sign`       | `s`           | sign APK                                                 |
+| `align`      | `a`           | align APK                                                |
 
 ### Apply all necessary patches for pentest
+
 `all` subcommand sets networkSecurityConfig, makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true`, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
@@ -112,6 +116,7 @@ Output: sample.patched.apk
 ```
 
 ### Set up networkSecurityConfig
+
 `network` subcommand sets networkSecurityConfig.
 Decode the APK, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
@@ -125,6 +130,7 @@ Output: sample.patched.apk
 ```
 
 ### Set debuggable attribute
+
 `debuggable` subcommand makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
 
@@ -138,6 +144,7 @@ Output: sample.patched.apk
 ```
 
 ### Get the package name
+
 `info` subcommand allows you to see the package name.
 
 ```
@@ -147,10 +154,11 @@ Getting package name by aapt...
 ```
 
 ### Get the screenshot
+
 `screenshot` subcommand allows you to get the screenshot from connected device.
 
 ```
-$ apkutil screenshot 
+$ apkutil screenshot
 Getting a screenshot from connected device...
 /data/local/tmp/screenshot-2020-05-21-16-58-20.png: 1 file pulled. 2.1 MB/s (14419 bytes in 0.007s)
 
@@ -158,6 +166,7 @@ Output: screenshot-2020-05-21-16-58-20.png
 ```
 
 ### Decode the APK
+
 `decode` subcommand make the APK decode by apktool.
 When decoding the APK, check for potentially sensitive files and check the AndroidManifest.xml.
 
@@ -185,6 +194,7 @@ None
 ```
 
 ### Build the APK
+
 `build` subcommand make the APK build by apktool.
 It also sign the APK after the build is complete.
 
@@ -200,6 +210,7 @@ Output: sample.patched.apk
 ```
 
 ### Sign the APK
+
 `sign` subcommand make the apk sign by apksigner.
 
 ```
@@ -208,5 +219,15 @@ Signing APK by apksigner...
 Signed
 ```
 
+### Align the APK
+
+`align` subcommand make the apk sign by apksigner.
+
+```
+$ apkutil align base.patched.apk
+Aligning APK by zipalign...
+```
+
 ## License
+
 MIT License
