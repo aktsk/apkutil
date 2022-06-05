@@ -42,6 +42,14 @@ def cmd_set_debuggable(args):
         print(Fore.RED + 'Failed')
         return
 
+    print('Aligning APK by zipalign...')
+    try:
+        util.align(apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
     print('Signing APK by apksigner...')
     try:
         util.sign(apk_path)
@@ -82,6 +90,14 @@ def cmd_set_network(args):
 
     try:
         util.build(dir_name, apk_path, aapt2=args.aapt2)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+    
+    print('Aligning APK by zipalign...')
+    try:
+        util.align(apk_path)
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -135,6 +151,14 @@ def cmd_all(args):
         print(Fore.RED + 'Failed')
         return
 
+    print('Aligning APK by zipalign...')
+    try:
+        util.align(apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+
     print('Signing APK by apksigner...')
     try:
         util.sign(apk_path)
@@ -149,19 +173,20 @@ def cmd_all(args):
 def cmd_decode(args):
     print('Decoding APK by Apktool...')
     try:
-        util.decode(args.apk_path)
+        util.decode(args.apk_path, no_res=args.no_res, no_src=args.no_src)
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
         return
 
-    dir_path = args.apk_path.replace('.apk', '')
-    print('Potentially Sensitive Files:')
-    util.check_sensitive_files(dir_path)
+    if not args.no_res:
+        dir_path = args.apk_path.replace('.apk', '')
+        print('Potentially Sensitive Files:')
+        util.check_sensitive_files(dir_path)
 
-    print('Checking AndroidManifest.xml...')
-    manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
-    manifest.check_all()
+        print('Checking AndroidManifest.xml...')
+        manifest = manifestutil.ManifestUtil(dir_path + '/AndroidManifest.xml')
+        manifest.check_all()
 
 def cmd_build(args):
     print('Building APK by Apktool...')
@@ -170,6 +195,14 @@ def cmd_build(args):
         apk_path = args.dir_name + ".patched.apk"
     try:
         util.build(args.dir_name, apk_path, aapt2=args.aapt2)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
+    
+    print('Aligning APK by zipalign...')
+    try:
+        util.align(apk_path)
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -184,6 +217,15 @@ def cmd_build(args):
         return
 
     print(Fore.CYAN + 'Output: ' + apk_path)
+
+def cmd_align(args):
+    print('Aligning APK by zipalign...')
+    try:
+        util.align(args.apk_path)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+        return
 
 
 def cmd_sign(args):
@@ -220,8 +262,6 @@ def cmd_screenshot(args):
 def main():
     colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description='useful utility for android security testing')
-    parser.add_argument('-2', '--aapt2', '--use-aapt2', action='store_true',
-        dest='aapt2', help='Use the aapt2 binary instead of aapt as part of the apktool processing.')
 
     subparsers = parser.add_subparsers()
     parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='set debuggable, build & sign APK')
@@ -234,16 +274,22 @@ def main():
     parser_todebuggable.add_argument('--output', '-o')
     parser_todebuggable.set_defaults(handler=cmd_set_network)
 
-    parser_all = subparsers.add_parser('all', aliases=['a'], help='set debuggable & networkSecurityConfig, build & sign APK')
+    parser_all = subparsers.add_parser('all', help='set debuggable & networkSecurityConfig, build & sign APK')
     parser_all.add_argument('apk_path', help='')
     parser_all.add_argument('--output', '-o')
     parser_all.set_defaults(handler=cmd_all)
 
-    parser_decompile = subparsers.add_parser('decode', aliases=['d'], help='decode APK')
-    parser_decompile.add_argument('apk_path', help='')
-    parser_decompile.set_defaults(handler=cmd_decode)
+    parser_decode = subparsers.add_parser('decode', aliases=['d'], help='decode APK')
+    parser_decode.add_argument('-r', '--no-res', action='store_true',
+        dest='no_res', help='do not decode resources.')
+    parser_decode.add_argument('-s', '--no-src', action='store_true',
+        dest='no_src', help='do not decode sources.')
+    parser_decode.add_argument('apk_path', help='')
+    parser_decode.set_defaults(handler=cmd_decode)
 
     parser_build = subparsers.add_parser('build', aliases=['b'], help='build APK')
+    parser_build.add_argument('-2', '--aapt2', '--use-aapt2', action='store_true',
+        dest='aapt2', help='use the aapt2 binary instead of aapt as part of the apktool processing.')
     parser_build.add_argument('dir_name', help='')
     parser_build.add_argument('--output', '-o')
     parser_build.set_defaults(handler=cmd_build)
@@ -251,6 +297,10 @@ def main():
     parser_sign = subparsers.add_parser('sign', aliases=['s'], help='sign APK')
     parser_sign.add_argument('apk_path', help='')
     parser_sign.set_defaults(handler=cmd_sign)
+
+    parser_sign = subparsers.add_parser('align', aliases=['a'], help='align APK')
+    parser_sign.add_argument('apk_path', help='')
+    parser_sign.set_defaults(handler=cmd_align)
 
     parser_info = subparsers.add_parser('info', aliases=['i'], help='identify the package name')
     parser_info.add_argument('apk_path', help='')
