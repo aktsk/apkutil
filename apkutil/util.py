@@ -9,9 +9,15 @@ import subprocess
 from colorama import Fore
 
 
-def decode(apk_path):
+def decode(apk_path, no_res=False, no_src=False):
     apktool_cmd = ['apktool']
     apktool_cmd.extend(['d', apk_path])
+
+    if no_res:
+        apktool_cmd.extend(['-r'])
+
+    if no_src:
+        apktool_cmd.extend(['-s'])
 
     try:
         proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -60,9 +66,31 @@ def build(dir_name, apk_path, aapt2=False):
         print('apktool not found.')
         print('Please install apktool.')
 
+def align(apk_path):
+    android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
+
+    try:
+        zipalign_path = glob.glob(android_home + '/build-tools/*/zipalign')[0]
+        zipalign_cmd = [zipalign_path]
+        zipalign_cmd.append('-f')
+        zipalign_cmd.extend(['-p', '4'])
+        zipalign_cmd.append(apk_path)
+        zipalign_cmd.append('/tmp/apkutil_tmp.aligned.apk')
+        proc = subprocess.Popen(zipalign_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _, errs = proc.communicate()
+        if len(errs) != 0:
+            errs = errs.decode('ascii')
+            raise Exception(errs)
+
+        os.replace('/tmp/apkutil_tmp.aligned.apk', apk_path)
+    except (IndexError, FileNotFoundError) as e:
+        print('zipalign not found.')
+        print('Please install Android SDK Build Tools.')
+
 
 def sign(apk_path):
     home_dir = os.environ['HOME']
+    android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
     keystore_path = ''
     ks_key_alias = ''
     ks_pass = ''
@@ -83,7 +111,7 @@ def sign(apk_path):
             errs = '{0} is not found.'.format(apk_path)
             raise Exception(errs)
 
-        apksigner_path = glob.glob(home_dir + '/Library/Android/sdk/build-tools/*/apksigner')[0]
+        apksigner_path = glob.glob(android_home + '/build-tools/*/apksigner')[0]
         apksigner_cmd = [apksigner_path]
         apksigner_cmd.append('sign')
         apksigner_cmd.extend(['-ks', keystore_path])
@@ -108,8 +136,8 @@ def sign(apk_path):
 
 def get_packagename(apk_path):
     try:
-        home_dir = os.environ['HOME']
-        aapt_path = glob.glob(home_dir + '/Library/Android/sdk/build-tools/*/aapt')[0]
+        android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
+        aapt_path = glob.glob(android_home + '/build-tools/*/aapt')[0]
         aapt_cmd = [aapt_path]
         aapt_cmd.append('l')
         aapt_cmd.append('-a')
@@ -132,8 +160,8 @@ def get_packagename(apk_path):
 
 def get_screenshot():
     try:
-        home_dir = os.environ['HOME']
-        adb_path = glob.glob(home_dir + '/Library/Android/sdk/platform-tools/adb')[0]
+        android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
+        adb_path = glob.glob(android_home + '/platform-tools/adb')[0]
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
         screenshot_file = 'screenshot-' + timestamp + '.png'
