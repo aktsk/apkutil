@@ -221,7 +221,7 @@ Signed
 
 ### Align the APK
 
-`align` subcommand make the apk sign by apksigner.
+`align` subcommand make the apk align by zipalign.
 
 ```
 $ apkutil align base.patched.apk
