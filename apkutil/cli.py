@@ -267,6 +267,8 @@ def main():
     parser_todebuggable = subparsers.add_parser('debuggable', aliases=['debug', 'dg'], help='set debuggable, build & sign APK')
     parser_todebuggable.add_argument('apk_path', help='')
     parser_todebuggable.add_argument('--output', '-o')
+    parser_todebuggable.add_argument('-2', '--aapt2', '--use-aapt2', action='store_true',
+        dest='aapt2', help='use the aapt2 binary instead of aapt as part of the apktool processing.')
     parser_todebuggable.set_defaults(handler=cmd_set_debuggable)
 
     parser_todebuggable = subparsers.add_parser('network', aliases=['net', 'n'], help='set networkSecurityConfig, build & sign APK')

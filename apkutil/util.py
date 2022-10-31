@@ -6,8 +6,31 @@ import glob
 import json
 import os
 import subprocess
+import platform
+import tempfile
 from colorama import Fore
 
+pf = platform.system()
+if pf == 'Windows':
+    popen_args = {'shell':True,'stdout':subprocess.PIPE,'stderr':subprocess.PIPE}
+    apk_signer = 'apksigner.bat'
+    zipalign = 'zipalign.exe'
+    aapt = 'aapt.exe'
+    adb = 'adb.exe'
+elif pf == 'Darwin':
+    popen_args = {'stdout':subprocess.PIPE,'stderr':subprocess.PIPE}
+    apk_signer = 'apksigner'
+    zipalign = 'zipalign'
+    aapt = 'aapt'
+    adb = 'adb'
+elif pt == 'Linux':
+    popen_args = {'stdout':subprocess.PIPE,'stderr':subprocess.PIPE}
+    apk_signer = 'apksigner'
+    zipalign = 'zipalign'
+    aapt = 'aapt'
+    adb = 'adb'
+
+tmp_dir = tempfile.gettempdir()
 
 def decode(apk_path, no_res=False, no_src=False):
     apktool_cmd = ['apktool']
@@ -20,7 +43,7 @@ def decode(apk_path, no_res=False, no_src=False):
         apktool_cmd.extend(['-s'])
 
     try:
-        proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(apktool_cmd, **popen_args)
         outs, errs = proc.communicate()
         if (outs is not None) and (len(outs) != 0):
             print(outs.decode('ascii'))
@@ -45,7 +68,7 @@ def build(dir_name, apk_path, aapt2=False):
         apktool_cmd.extend(['--use-aapt2'])
     
     try:
-        proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(apktool_cmd, **popen_args)
         outs, errs = proc.communicate()
 
         is_built = False
@@ -70,26 +93,32 @@ def align(apk_path):
     android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
 
     try:
-        zipalign_path = glob.glob(android_home + '/build-tools/*/zipalign')[0]
+        zipalign_path = glob.glob(android_home + '/build-tools/*/' + zipalign)[0]
         zipalign_cmd = [zipalign_path]
         zipalign_cmd.append('-f')
         zipalign_cmd.extend(['-p', '4'])
         zipalign_cmd.append(apk_path)
-        zipalign_cmd.append('/tmp/apkutil_tmp.aligned.apk')
-        proc = subprocess.Popen(zipalign_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        zipalign_cmd.append(tmp_dir + '/apkutil_tmp.aligned.apk')
+        proc = subprocess.Popen(zipalign_cmd, **popen_args)
         _, errs = proc.communicate()
         if len(errs) != 0:
             errs = errs.decode('ascii')
             raise Exception(errs)
 
-        os.replace('/tmp/apkutil_tmp.aligned.apk', apk_path)
+        os.replace(tmp_dir + '/apkutil_tmp.aligned.apk', apk_path)
     except (IndexError, FileNotFoundError) as e:
         print('zipalign not found.')
         print('Please install Android SDK Build Tools.')
 
 
 def sign(apk_path):
-    home_dir = os.environ['HOME']
+    if pf == 'Windows':
+        home_dir = os.environ['USERPROFILE']
+    elif pf == 'Darwin':
+        home_dir = os.environ['HOME']
+    elif pf == 'Linux':
+        home_dir = os.environ['HOME']        
+
     android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
     keystore_path = ''
     ks_key_alias = ''
@@ -111,7 +140,7 @@ def sign(apk_path):
             errs = '{0} is not found.'.format(apk_path)
             raise Exception(errs)
 
-        apksigner_path = glob.glob(android_home + '/build-tools/*/apksigner')[0]
+        apksigner_path = glob.glob(android_home + '/build-tools/*/' + apk_signer)[0]
         apksigner_cmd = [apksigner_path]
         apksigner_cmd.append('sign')
         apksigner_cmd.extend(['-ks', keystore_path])
@@ -120,7 +149,7 @@ def sign(apk_path):
         apksigner_cmd.extend(['--ks-key-alias', ks_key_alias])
         apksigner_cmd.extend(['--ks-pass', ks_pass])
         apksigner_cmd.append(apk_path)
-        proc = subprocess.Popen(apksigner_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(apksigner_cmd, **popen_args)
         outs, errs = proc.communicate()
         if (outs is not None) and (len(outs) != 0):
             print(Fore.CYAN + outs.decode('ascii'))
@@ -137,21 +166,28 @@ def sign(apk_path):
 def get_packagename(apk_path):
     try:
         android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
-        aapt_path = glob.glob(android_home + '/build-tools/*/aapt')[0]
+        aapt_path = glob.glob(android_home + '/build-tools/*/' + aapt)[0]
         aapt_cmd = [aapt_path]
         aapt_cmd.append('l')
         aapt_cmd.append('-a')
         aapt_cmd.append(apk_path)
-        aapt_proc = subprocess.Popen(aapt_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        grep_proc = subprocess.Popen(["grep", "A: package"], stdin=aapt_proc.stdout)
-        aapt_proc.stdout.close()
-        outs, errs = grep_proc.communicate()
-        if (outs is not None) and (len(outs) != 0):
-            print(outs.decode('ascii'))
+        aapt_proc = subprocess.Popen(aapt_cmd, **popen_args)
+        if pf == 'Windows':
+            outs, errs = aapt_proc.communicate()
+            for out in outs.split(b"\r\n"):
+                if out.find(b"A: package") != -1:
+                    print(out.decode('ascii'))
+                    break
+        else:
+            grep_proc = subprocess.Popen(["grep", "A: package"], stdin=aapt_proc.stdout)
+            aapt_proc.stdout.close()
+            outs, errs = grep_proc.communicate()
+            if (outs is not None) and (len(outs) != 0):
+                print(outs.decode('ascii'))
 
-        if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
-            raise Exception(errs)
+            if (errs is not None) and (len(errs) != 0):
+                errs = errs.decode('ascii')
+                raise Exception(errs)
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
@@ -161,7 +197,7 @@ def get_packagename(apk_path):
 def get_screenshot():
     try:
         android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
-        adb_path = glob.glob(android_home + '/platform-tools/adb')[0]
+        adb_path = glob.glob(android_home + '/platform-tools/' + adb)[0]
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
         screenshot_file = 'screenshot-' + timestamp + '.png'
@@ -171,7 +207,7 @@ def get_screenshot():
         screencap_cmd.append('shell')
         screencap_cmd.append('screencap')
         screencap_cmd.extend(['-p', screenshot_path])
-        screencap_proc = subprocess.Popen(screencap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        screencap_proc = subprocess.Popen(screencap_cmd, **popen_args)
         _, errs = screencap_proc.communicate()
 
         if (errs is not None) and (len(errs) != 0):
@@ -181,7 +217,7 @@ def get_screenshot():
         pull_cmd = [adb_path]
         pull_cmd.append('pull')
         pull_cmd.append(screenshot_path)
-        pull_proc = subprocess.Popen(pull_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pull_proc = subprocess.Popen(pull_cmd, **popen_args)
         outs, errs = pull_proc.communicate()
 
         if (errs is not None) and (len(errs) != 0):
@@ -195,7 +231,7 @@ def get_screenshot():
         rm_cmd.append('shell')
         rm_cmd.append('rm')
         rm_cmd.append(screenshot_path)
-        rm_proc = subprocess.Popen(rm_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        rm_proc = subprocess.Popen(rm_cmd, **popen_args)
         _, errs = rm_proc.communicate()
         if (errs is not None) and (len(errs) != 0):
             print(errs.decode('ascii'))
