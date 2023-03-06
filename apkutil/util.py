@@ -6,6 +6,7 @@ import glob
 import json
 import os
 import subprocess
+from shutil import move
 from colorama import Fore
 
 
@@ -82,7 +83,7 @@ def align(apk_path):
             errs = errs.decode('ascii')
             raise Exception(errs)
 
-        os.replace('/tmp/apkutil_tmp.aligned.apk', apk_path)
+        move('/tmp/apkutil_tmp.aligned.apk', apk_path)
     except (IndexError, FileNotFoundError) as e:
         print('zipalign not found.')
         print('Please install Android SDK Build Tools.')
