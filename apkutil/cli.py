@@ -277,6 +277,8 @@ def main():
     parser_all = subparsers.add_parser('all', help='set debuggable & networkSecurityConfig, build & sign APK')
     parser_all.add_argument('apk_path', help='')
     parser_all.add_argument('--output', '-o')
+    parser_all.add_argument('-2', '--aapt2', '--use-aapt2', action='store_true',
+        dest='aapt2', help='use the aapt2 binary instead of aapt as part of the apktool processing.')
     parser_all.set_defaults(handler=cmd_all)
 
     parser_decode = subparsers.add_parser('decode', aliases=['d'], help='decode APK')
