@@ -12,6 +12,7 @@ iOS version is [here](https://github.com/aktsk/ipautil).
 ## Requirements
 
 - Android SDK build tools
+  - Set PATH to `ANDROID_HOME` for `apksigner`, `aapt`, and `zipalign`.
 - [Apktool](https://ibotpeaches.github.io/Apktool/)
 
 Also, place `~/apkutil.json` containing the keystore information necessary for signing apk in your home directory.
@@ -22,6 +23,12 @@ Also, place `~/apkutil.json` containing the keystore information necessary for s
     "ks-key-alias": "fuga",
     "ks-pass": "pass:foo"
 }
+```
+
+The certificate used for signing can be created using keytool.
+
+```
+$ keytool -genkeypair -v -keystore hoge.keystore -alias fuga -keyalg RSA -keysize 2048 -validity 10000 
 ```
 
 ## Installation
@@ -109,6 +116,7 @@ I: Building apk file...
 I: Copying unknown files/dir...
 I: Built apk...
 
+Aligning APK by zipalign...
 Signing APK by apksigner...
 Signed
 
@@ -203,6 +211,7 @@ $ apkutil build sample
 Building APK by Apktool...
 ...
 
+Aligning APK by zipalign...
 Signing APK by apksigner...
 Signed
 
