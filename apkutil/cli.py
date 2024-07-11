@@ -259,6 +259,15 @@ def cmd_screenshot(args):
         print(Fore.RED + 'Failed')
 
 
+def cmd_pull_apks(args):
+    print('Pulling APKs from device...')
+    try:
+        util.pull_apks(args.keyword)
+    except Exception as e:
+        print(e)
+        print(Fore.RED + 'Failed')
+
+
 def main():
     colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description='useful utility for android security testing')
@@ -310,6 +319,10 @@ def main():
 
     parser_screenshot = subparsers.add_parser('screenshot', aliases=['ss'], help='get screenshot from connected device')
     parser_screenshot.set_defaults(handler=cmd_screenshot)
+
+    parser_pull_apks = subparsers.add_parser('pull', aliases=['p'], help='pull APKs from device')
+    parser_pull_apks.add_argument('keyword', help='keyword to search for package name')
+    parser_pull_apks.set_defaults(handler=cmd_pull_apks)
 
     args = parser.parse_args()
     if hasattr(args, 'handler'):
