@@ -9,6 +9,13 @@ import subprocess
 from shutil import move
 from colorama import Fore
 
+ANDROID_SDK_DEFAULT_PATH = '/Library/Android/sdk/'
+ANDROID_HOME = os.environ.get('ANDROID_HOME', ANDROID_SDK_DEFAULT_PATH)
+
+def run_subprocess(cmd):
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    outs, errs = proc.communicate()
+    return outs.decode('ascii'), errs.decode('ascii')
 
 def decode(apk_path, no_res=False, no_src=False):
     apktool_cmd = ['apktool']
@@ -21,13 +28,11 @@ def decode(apk_path, no_res=False, no_src=False):
         apktool_cmd.extend(['-s'])
 
     try:
-        proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        outs, errs = proc.communicate()
+        outs, errs = run_subprocess(apktool_cmd)
         if (outs is not None) and (len(outs) != 0):
-            print(outs.decode('ascii'))
+            print(outs)
         
         if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
             # unsupported `apktool d -f`
             errs = errs.replace('Use -f switch if you want to overwrite it.', '')
             raise Exception(errs)
@@ -46,21 +51,17 @@ def build(dir_name, apk_path, aapt2=False):
         apktool_cmd.extend(['--use-aapt2'])
     
     try:
-        proc = subprocess.Popen(apktool_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        outs, errs = proc.communicate()
+        outs, errs = run_subprocess(apktool_cmd)
 
         is_built = False
 
         if (outs is not None) and (len(outs) != 0):
-            outs = outs.decode('ascii')
-
             if "I: Built apk..." in outs:
                 is_built = True
 
             print(outs)
         
         if (errs is not None) and (len(errs) != 0) and not is_built:
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
     except FileNotFoundError as e:
@@ -68,19 +69,15 @@ def build(dir_name, apk_path, aapt2=False):
         print('Please install apktool.')
 
 def align(apk_path):
-    android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
-
     try:
-        zipalign_path = glob.glob(android_home + '/build-tools/*/zipalign')[0]
+        zipalign_path = glob.glob(ANDROID_HOME + '/build-tools/*/zipalign')[0]
         zipalign_cmd = [zipalign_path]
         zipalign_cmd.append('-f')
         zipalign_cmd.extend(['-p', '4'])
         zipalign_cmd.append(apk_path)
         zipalign_cmd.append('/tmp/apkutil_tmp.aligned.apk')
-        proc = subprocess.Popen(zipalign_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, errs = proc.communicate()
+        _, errs = run_subprocess(zipalign_cmd)
         if len(errs) != 0:
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
         move('/tmp/apkutil_tmp.aligned.apk', apk_path)
@@ -91,7 +88,6 @@ def align(apk_path):
 
 def sign(apk_path):
     home_dir = os.environ['HOME']
-    android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
     keystore_path = ''
     ks_key_alias = ''
     ks_pass = ''
@@ -112,7 +108,7 @@ def sign(apk_path):
             errs = '{0} is not found.'.format(apk_path)
             raise Exception(errs)
 
-        apksigner_path = glob.glob(android_home + '/build-tools/*/apksigner')[0]
+        apksigner_path = glob.glob(ANDROID_HOME + '/build-tools/*/apksigner')[0]
         apksigner_cmd = [apksigner_path]
         apksigner_cmd.append('sign')
         apksigner_cmd.extend(['-ks', keystore_path])
@@ -121,13 +117,11 @@ def sign(apk_path):
         apksigner_cmd.extend(['--ks-key-alias', ks_key_alias])
         apksigner_cmd.extend(['--ks-pass', ks_pass])
         apksigner_cmd.append(apk_path)
-        proc = subprocess.Popen(apksigner_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        outs, errs = proc.communicate()
+        outs, errs = run_subprocess(apksigner_cmd)
         if (outs is not None) and (len(outs) != 0):
-            print(Fore.CYAN + outs.decode('ascii'))
+            print(Fore.CYAN + outs)
         
         if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
     except (IndexError, FileNotFoundError) as e:
@@ -137,8 +131,7 @@ def sign(apk_path):
 
 def get_packagename(apk_path):
     try:
-        android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
-        aapt_path = glob.glob(android_home + '/build-tools/*/aapt')[0]
+        aapt_path = glob.glob(ANDROID_HOME + '/build-tools/*/aapt')[0]
         aapt_cmd = [aapt_path]
         aapt_cmd.append('l')
         aapt_cmd.append('-a')
@@ -147,11 +140,11 @@ def get_packagename(apk_path):
         grep_proc = subprocess.Popen(["grep", "A: package"], stdin=aapt_proc.stdout)
         aapt_proc.stdout.close()
         outs, errs = grep_proc.communicate()
+        outs, errs = outs.decode('ascii'), errs.decode('ascii')
         if (outs is not None) and (len(outs) != 0):
-            print(outs.decode('ascii'))
+            print(outs)
 
         if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
     except (IndexError, FileNotFoundError) as e:
@@ -161,8 +154,7 @@ def get_packagename(apk_path):
 
 def get_screenshot():
     try:
-        android_home = os.environ['ANDROID_HOME'] or '/Library/Android/sdk/'
-        adb_path = glob.glob(android_home + '/platform-tools/adb')[0]
+        adb_path = glob.glob(ANDROID_HOME + '/platform-tools/adb')[0]
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
         screenshot_file = 'screenshot-' + timestamp + '.png'
@@ -172,34 +164,27 @@ def get_screenshot():
         screencap_cmd.append('shell')
         screencap_cmd.append('screencap')
         screencap_cmd.extend(['-p', screenshot_path])
-        screencap_proc = subprocess.Popen(screencap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, errs = screencap_proc.communicate()
-
+        _, errs = run_subprocess(screencap_cmd)
         if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
         pull_cmd = [adb_path]
         pull_cmd.append('pull')
         pull_cmd.append(screenshot_path)
-        pull_proc = subprocess.Popen(pull_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        outs, errs = pull_proc.communicate()
-
+        outs, errs = run_subprocess(pull_cmd)
         if (errs is not None) and (len(errs) != 0):
-            errs = errs.decode('ascii')
             raise Exception(errs)
 
         if (outs is not None) and (len(outs) != 0):
-            print(outs.decode('ascii'))
+            print(outs)
 
         rm_cmd = [adb_path]
         rm_cmd.append('shell')
         rm_cmd.append('rm')
         rm_cmd.append(screenshot_path)
-        rm_proc = subprocess.Popen(rm_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, errs = rm_proc.communicate()
+        _, errs = run_subprocess(rm_cmd)
         if (errs is not None) and (len(errs) != 0):
-            print(errs.decode('ascii'))
+            print(errs)
 
         return screenshot_file
 
