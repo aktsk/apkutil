@@ -61,6 +61,7 @@ Most of the subcommands are assigned with alias, which is useful.
 | `build`      | `b`           | build APK                                                |
 | `sign`       | `s`           | sign APK                                                 |
 | `align`      | `a`           | align APK                                                |
+| `pull`       | `p`           | pull APKs from device                                    |
 
 ### Apply all necessary patches for pentest
 
