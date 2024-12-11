@@ -243,10 +243,9 @@ def get_screenshot():
         pull_cmd = [adb_path]
         pull_cmd.append('pull')
         pull_cmd.append(screenshot_path)
-        outs, errs = run_subprocess(pull_cmd)
-
-        if (outs is not None) and (len(outs) != 0):
-            print(outs)
+        _, errs = run_subprocess(pull_cmd)
+        # Logs are output to stderr even if command execution is successful.
+        print(errs)
 
         rm_cmd = [adb_path]
         rm_cmd.append('shell')
