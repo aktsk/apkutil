@@ -44,7 +44,9 @@ def cmd_set_debuggable(args):
 
     print('Aligning APK by zipalign...')
     try:
-        util.align(apk_path)
+        result = util.align(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -52,7 +54,9 @@ def cmd_set_debuggable(args):
 
     print('Signing APK by apksigner...')
     try:
-        util.sign(apk_path)
+        result = util.sign(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -97,7 +101,9 @@ def cmd_set_network(args):
     
     print('Aligning APK by zipalign...')
     try:
-        util.align(apk_path)
+        result = util.align(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -105,7 +111,9 @@ def cmd_set_network(args):
 
     print('Signing APK by apksigner...')
     try:
-        util.sign(apk_path)
+        result = util.sign(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -117,7 +125,9 @@ def cmd_set_network(args):
 def cmd_all(args):
     print('Decoding APK by Apktool...')
     try:
-        util.decode(args.apk_path)
+        result = util.decode(args.apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -153,7 +163,9 @@ def cmd_all(args):
 
     print('Aligning APK by zipalign...')
     try:
-        util.align(apk_path)
+        result = util.align(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -161,7 +173,9 @@ def cmd_all(args):
 
     print('Signing APK by apksigner...')
     try:
-        util.sign(apk_path)
+        result = util.sign(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -173,7 +187,9 @@ def cmd_all(args):
 def cmd_decode(args):
     print('Decoding APK by Apktool...')
     try:
-        util.decode(args.apk_path, no_res=args.no_res, no_src=args.no_src)
+        result = util.decode(args.apk_path, no_res=args.no_res, no_src=args.no_src)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -194,7 +210,9 @@ def cmd_build(args):
     if args.output is None:
         apk_path = args.dir_name + ".patched.apk"
     try:
-        util.build(args.dir_name, apk_path, aapt2=args.aapt2)
+        result = util.build(args.dir_name, apk_path, aapt2=args.aapt2)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -202,7 +220,9 @@ def cmd_build(args):
     
     print('Aligning APK by zipalign...')
     try:
-        util.align(apk_path)
+        result = util.align(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -210,7 +230,9 @@ def cmd_build(args):
 
     print('Signing APK by apksigner...')
     try:
-        util.sign(apk_path)
+        result = util.sign(apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -221,7 +243,9 @@ def cmd_build(args):
 def cmd_align(args):
     print('Aligning APK by zipalign...')
     try:
-        util.align(args.apk_path)
+        result = util.align(args.apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -231,7 +255,9 @@ def cmd_align(args):
 def cmd_sign(args):
     print('Signing APK by apksigner...')
     try:
-        util.sign(args.apk_path)
+        result = util.sign(args.apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -243,7 +269,9 @@ def cmd_sign(args):
 def cmd_info(args):
     print('Getting package name by aapt...')
     try:
-        util.get_packagename(args.apk_path)
+        result = util.get_packagename(args.apk_path)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')
@@ -252,7 +280,9 @@ def cmd_info(args):
 def cmd_screenshot(args):
     print('Getting a screenshot from connected device...')
     try:
-        file_name = util.get_screenshot()
+        result = file_name = util.get_screenshot()
+        if not result:
+            raise Exception()
         print(Fore.CYAN + 'Output: ' + file_name)
     except Exception as e:
         print(e)
@@ -262,7 +292,9 @@ def cmd_screenshot(args):
 def cmd_pull_apks(args):
     print('Pulling APKs from device...')
     try:
-        util.pull_apks(args.keyword)
+        result = util.pull_apks(args.keyword)
+        if not result:
+            raise Exception()
     except Exception as e:
         print(e)
         print(Fore.RED + 'Failed')

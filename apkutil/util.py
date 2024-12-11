@@ -24,14 +24,14 @@ def pull_apks(keyword):
         package_name = get_package_name(keyword)
         if not package_name:
             print(f"No package found matching keyword: {keyword}")
-            return
+            return False
         
         print(f"Package found: {package_name}")
 
         apk_paths = get_apk_paths(package_name)
         if not apk_paths:
             print(f"No APK paths found for package: {package_name}")
-            return
+            return False
 
         pull_apk_files(apk_paths)
 
@@ -40,8 +40,10 @@ def pull_apks(keyword):
     except (IndexError, FileNotFoundError):
         print('adb not found.')
         print('Please install Android SDK Build Tools.')
+        return False
     except Exception as e:
         print(f"An error occurred: {e}")
+        return False
         
 def get_package_name(keyword):
     adb_path = glob.glob(ANDROID_HOME + '/platform-tools/adb')[0]
@@ -94,10 +96,13 @@ def decode(apk_path, no_res=False, no_src=False):
             # unsupported `apktool d -f`
             errs = errs.replace('Use -f switch if you want to overwrite it.', '')
             raise Exception(errs)
+        
+        return True
 
     except FileNotFoundError as e:
         print('apktool not found.')
         print('Please install apktool')
+        return False
 
 
 def build(dir_name, apk_path, aapt2=False):
@@ -125,6 +130,7 @@ def build(dir_name, apk_path, aapt2=False):
     except FileNotFoundError as e:
         print('apktool not found.')
         print('Please install apktool.')
+        return False
 
 def align(apk_path):
     try:
@@ -139,10 +145,12 @@ def align(apk_path):
             raise Exception(errs)
 
         move('/tmp/apkutil_tmp.aligned.apk', apk_path)
+        return True
+
     except (IndexError, FileNotFoundError) as e:
         print('zipalign not found.')
         print('Please install Android SDK Build Tools.')
-
+        return False
 
 def sign(apk_path):
     home_dir = os.environ['HOME']
@@ -159,7 +167,7 @@ def sign(apk_path):
 
     except:
         print('Please place `~/apkutil.json` containing the keystore information')
-        return
+        return False
 
     try:
         if not os.path.isfile(apk_path):
@@ -180,11 +188,15 @@ def sign(apk_path):
             print(Fore.CYAN + outs)
         
         if (errs is not None) and (len(errs) != 0):
-            raise Exception(errs)
+            print(Fore.RED + errs)
+            return False
+        
+        return True
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
         print('Please install Android SDK Build Tools.')
+        return False
 
 
 def get_packagename(apk_path):
@@ -204,11 +216,13 @@ def get_packagename(apk_path):
 
         if (errs is not None) and (len(errs) != 0):
             raise Exception(errs)
+        
+        return True
 
     except (IndexError, FileNotFoundError) as e:
         print('apksigner not found.')
         print('Please install Android SDK Build Tools.')
-
+        return False
 
 def get_screenshot():
     try:
@@ -230,8 +244,6 @@ def get_screenshot():
         pull_cmd.append('pull')
         pull_cmd.append(screenshot_path)
         outs, errs = run_subprocess(pull_cmd)
-        if (errs is not None) and (len(errs) != 0):
-            raise Exception(errs)
 
         if (outs is not None) and (len(outs) != 0):
             print(outs)
@@ -249,6 +261,7 @@ def get_screenshot():
     except (IndexError, FileNotFoundError) as e:
         print('adb not found.')
         print('Please install Android SDK Build Tools.')
+        return False
 
 
 def check_sensitive_files(target_path):
