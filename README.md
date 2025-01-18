@@ -1,13 +1,13 @@
 # apkutil
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/aktsk/apkutil/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sterrasec/apkutil/blob/master/LICENSE)
 
 `apkutil` is a useful utility for mobile security testing.
 This tool makes it easy to resign the APK, check for potentially sensitive files and `AndroidManifest.xml` in the APK.
 
 It is a wrapper for `apktool`, `apksigner`, `aapt`, and `zipalign` commands.
 
-iOS version is [here](https://github.com/aktsk/ipautil).
+iOS version is [here](https://github.com/sterrasec/ipautil).
 
 ## Requirements
 
@@ -36,7 +36,7 @@ $ keytool -genkeypair -v -keystore hoge.keystore -alias fuga -keyalg RSA -keysiz
 Since `apkutil` is implemented in Python, it can be installed with the pip command, which is a Python package management system.
 
 ```
-$ pip install git+ssh://git@github.com/aktsk/apkutil.git
+$ pip install git+ssh://git@github.com/sterrasec/apkutil.git
 ```
 
 ## Usage
@@ -68,7 +68,7 @@ Most of the subcommands are assigned with alias, which is useful.
 `all` subcommand sets networkSecurityConfig, makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true`, set networkSecurityConfig attribute to `@xml/network_security_config` in AndroidManifest, make `res/xml/network_security_config.xml`, and rebuild it.
 
-This feature is useful to make APK accept user certs, and use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
+This feature is useful to make APK accept user certs, and use [sterrasec/apk-medit](https://github.com/sterrasec/apk-medit).
 
 ```
 $ apkutil all sample.apk
@@ -143,7 +143,7 @@ Output: sample.patched.apk
 `debuggable` subcommand makes the APK debuggable.
 Decode the APK, set debuggable attribute to `true` in AndroidManifest, and rebuild it.
 
-This feature is useful to use [aktsk/apk-medit](https://github.com/aktsk/apk-medit).
+This feature is useful to use [sterrasec/apk-medit](https://github.com/sterrasec/apk-medit).
 
 ```
 $ apkutil debuggable sample.apk
@@ -159,7 +159,7 @@ Output: sample.patched.apk
 ```
 $ apkutil info sample.apk
 Getting package name by aapt...
-    A: package="jp.aktsk.sample" (Raw: "jp.aktsk.sample")
+    A: package="jp.sterrasec.sample" (Raw: "jp.sterrasec.sample")
 ```
 
 ### Get the screenshot
